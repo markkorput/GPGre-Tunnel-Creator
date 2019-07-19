@@ -51,18 +51,14 @@ public class TunnelSpawnerEditor : Editor
         if (GUILayout.Button("Populate Tunnel With Prefabs"))
         {
 			if (script.overrideExistingTunnels) {
-				Transform tunnel = script.transform.Find ("Tunnel");
-				if (tunnel != null)
-					DestroyImmediate (tunnel.gameObject);
-			}
+                script.RemoveTunnelPrefabs();
+            }
             script.SpawnTunnelPrefabs();
         }
         if (GUILayout.Button("Generate Collider"))
         {
 			if (script.overrideExistingTunnels) {
-				Transform col = script.transform.Find ("Tunnel Collider");
-				if (col != null)
-					DestroyImmediate (col.gameObject);
+                script.RemoveTunnelCollider();
 			}
 
             script.CreateTunnelCollider();
@@ -70,6 +66,7 @@ public class TunnelSpawnerEditor : Editor
 		if (GUILayout.Button("Generate Mesh"))
 		{
 			if (script.overrideExistingTunnels) {
+                script.RemoveTunnelMesh();
 				Transform col = script.transform.Find ("Tunnel Mesh");
 				if (col != null)
 					DestroyImmediate (col.gameObject);

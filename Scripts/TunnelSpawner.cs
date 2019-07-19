@@ -34,6 +34,7 @@ namespace GPGre.TunnelCreator
     /// <summary>
     /// Tunnel creation tool along quadratic Bezier Splines
     /// </summary>
+    [ExecuteInEditMode]
     public class TunnelSpawner : MonoBehaviour
     {
         #region Prefab Parameters
@@ -83,6 +84,15 @@ namespace GPGre.TunnelCreator
 
         #endregion
 
+        #region Editor Behaviour
+        #if UNITY_EDITOR
+        [Header("Editor Behaviour")]
+        public bool RealtimeUpdateMesh = false;
+        public bool RealtimeUpdateCollider = false;
+        public bool REaltimeUpdatePrefabs = false;
+        #endif
+        #endregion
+
         #region Private Variables
 
         // Hold every Curve Point size
@@ -93,6 +103,12 @@ namespace GPGre.TunnelCreator
         #endregion
 
         #region Spawn Prefabs Methods
+
+        public void RemoveTunnelPrefabs() {
+            Transform tunnel = this.transform.Find ("Tunnel");
+            if (tunnel != null)
+                DestroyImmediate (tunnel.gameObject);
+        }
 
         /// <summary>
         /// Create a new tunnel gameobject using set parameters
@@ -164,6 +180,12 @@ namespace GPGre.TunnelCreator
 
         #region Tunnel Mesh Methods
 
+        public void RemoveTunnelMesh() {
+            Transform col = this.transform.Find ("Tunnel Mesh");
+            if (col != null)
+                DestroyImmediate (col.gameObject);
+        }
+
 		public void CreateTunnelMesh()
 		{
 			GameObject go = new GameObject("Tunnel Mesh");
@@ -188,6 +210,12 @@ namespace GPGre.TunnelCreator
 			meshFilter.sharedMesh = mesh;
 		}
 
+        public void RemoveTunnelCollider() {
+            Transform col = this.transform.Find ("Tunnel Collider");
+            if (col != null)
+                DestroyImmediate (col.gameObject);
+        }
+
         public void CreateTunnelCollider()
         {
             GameObject col = new GameObject("Tunnel Collider");
@@ -205,8 +233,6 @@ namespace GPGre.TunnelCreator
 
         Vector3[] TunnelVertices()
         {
-
-
             float tunnelLength = bezierSpline.SplineDistance;
             int ringAmount = Mathf.RoundToInt(tunnelLength * tunnelDensity.x * meshPrecision);
             Vector3[] vertices = new Vector3[ringAmount * meshRadiusVertexCount];
@@ -409,6 +435,30 @@ namespace GPGre.TunnelCreator
 
         #endregion
 
+        #region Editor Behaviour
+        #if UNITY_EDITOR
+        void Awake() {
+            this.bezierSpline.OnSplineChange += this.OnSplineChange;
+        }
+
+        void OnSplineChange() {
+            if (this.RealtimeUpdateMesh) {
+                this.RemoveTunnelMesh();
+                this.CreateTunnelMesh();
+            }
+
+            if (this.RealtimeUpdateCollider) {
+                this.RemoveTunnelCollider();
+                this.CreateTunnelCollider();
+            }
+
+            if (this.REaltimeUpdatePrefabs) {
+                this.RemoveTunnelPrefabs();
+                this.SpawnTunnelPrefabs();
+            }
+        }
+        #endif
+        #endregion
         /*
         #region Gizmos
         
