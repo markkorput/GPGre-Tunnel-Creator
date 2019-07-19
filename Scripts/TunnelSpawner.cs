@@ -345,6 +345,7 @@ namespace GPGre.TunnelCreator
         public void SetControlPointSize(int i, float size)
         {
             controlPointSizes[i] = size;
+            this.OnSplineChange();
         }
 
         public void RegenerateControlPointSizes()
